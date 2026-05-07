@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/thinknextapp/',  // ← Your repository name (same as homepage path)
+  base: '/thinknextapp/',  // Your repository name
   build: {
     outDir: 'dist',
     assetsDir: 'assets',

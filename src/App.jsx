@@ -1,4 +1,3 @@
-import React from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
@@ -7,7 +6,7 @@ import Students from './pages/Students';
 import Courses from './pages/Courses';
 import Attendance from './components/Attendance';
 import StudentDashboard from './pages/StudentDashboard';
-import Navbar from './components/Navbar'; // Add this import
+import Navbar from './components/Navbar';
 import './App.css';
 
 // Protected Route Component
@@ -61,12 +60,10 @@ function AppContent() {
     return <Navigate to="/login" />;
   }
 
-  // For admin users - redirect to admin routes
   if (user.role === 'admin') {
     return <Navigate to="/admin/dashboard" />;
   }
 
-  // For student users - redirect to student routes
   if (user.role === 'student') {
     return <Navigate to="/student/dashboard" />;
   }
