@@ -217,8 +217,7 @@ export default function Login() {
                             background: '#f3f4f6',
                             borderRadius: '12px'
                         }}>
-                            <p><strong>Admin Credentials:</strong></p>
-                            <p>Email: admin@thinknext.com | Password: admin123</p>
+                            
                         </div>
                     )}
                 </form>
