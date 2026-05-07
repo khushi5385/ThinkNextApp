@@ -201,8 +201,7 @@ export default function Login() {
                             background: '#f3f4f6',
                             borderRadius: '12px'
                         }}>
-                            <p><strong>Demo Student Credentials:</strong></p>
-                            <p>Email: john@example.com | Password: password123</p>
+                            
                             <p style={{ fontSize: '0.7rem', marginTop: '0.5rem' }}>
                                 Note: Register as student first from admin panel
                             </p>
