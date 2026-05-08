@@ -36,7 +36,7 @@ export default function StudentForm({ onSave, onClose, initialData }) {
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
                 <h3>
                     <i className="fas fa-user-graduate"></i>
                     {initialData ? '✏️ Edit Student' : '➕ Add New Student'}
