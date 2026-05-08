@@ -13,8 +13,15 @@ export default function Courses() {
     const loadCourses = () => {
         try {
             const stored = localStorage.getItem('courses');
-            if (stored && JSON.parse(stored).length > 0) {
-                setCourses(JSON.parse(stored));
+            if (stored) {
+                const parsedCourses = JSON.parse(stored);
+                if (parsedCourses && parsedCourses.length > 0) {
+                    setCourses(parsedCourses);
+                } else {
+                    const defaultCourses = getDefaultCourses();
+                    setCourses(defaultCourses);
+                    localStorage.setItem('courses', JSON.stringify(defaultCourses));
+                }
             } else {
                 const defaultCourses = getDefaultCourses();
                 setCourses(defaultCourses);
@@ -22,6 +29,9 @@ export default function Courses() {
             }
         } catch (error) {
             console.error("Error loading courses:", error);
+            // Set default courses on error
+            const defaultCourses = getDefaultCourses();
+            setCourses(defaultCourses);
         } finally {
             setLoading(false);
         }
@@ -42,18 +52,21 @@ export default function Courses() {
         ];
     };
 
+    // Safely compute categories - only when courses is an array
     const categories = [
-        { id: 'all', name: 'All Courses', icon: '📚', count: courses.length },
-        { id: 'engineering', name: 'Engineering', icon: '🔧', count: courses.filter(c => c.category === 'engineering').length },
-        { id: 'technical', name: 'Technical / IT', icon: '💻', count: courses.filter(c => c.category === 'technical').length }
+        { id: 'all', name: 'All Courses', icon: '📚', count: courses?.length || 0 },
+        { id: 'engineering', name: 'Engineering', icon: '🔧', count: courses?.filter(c => c?.category === 'engineering')?.length || 0 },
+        { id: 'technical', name: 'Technical / IT', icon: '💻', count: courses?.filter(c => c?.category === 'technical')?.length || 0 }
     ];
 
-    const filteredCourses = courses.filter(course => {
+    // Safely filter courses
+    const filteredCourses = (courses || []).filter(course => {
+        if (!course) return false;
         const matchCategory = selectedCategory === 'all' || course.category === selectedCategory;
         const matchSearch = searchTerm === '' ||
-            course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            course.instructor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (course.topics && course.topics.some(t => t.toLowerCase().includes(searchTerm.toLowerCase())));
+            (course.name && course.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (course.instructor && course.instructor.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (course.topics && Array.isArray(course.topics) && course.topics.some(t => t && t.toLowerCase().includes(searchTerm.toLowerCase())));
         return matchCategory && matchSearch;
     });
 
@@ -74,7 +87,7 @@ export default function Courses() {
                     Course Catalog
                 </h1>
                 <div style={{ fontSize: '0.85rem', color: '#4f46e5', background: '#eef2ff', padding: '6px 16px', borderRadius: '40px' }}>
-                    <i className="fas fa-graduation-cap"></i> {courses.length}+ Professional Courses
+                    <i className="fas fa-graduation-cap"></i> {courses?.length || 0}+ Professional Courses
                 </div>
             </div>
 
@@ -140,7 +153,7 @@ export default function Courses() {
             {/* Results Info */}
             {filteredCourses.length > 0 && (
                 <div style={{ marginBottom: '1rem', textAlign: 'center', color: '#6b7280', fontSize: '0.85rem' }}>
-                    <i className="fas fa-list"></i> Showing {filteredCourses.length} of {courses.length} courses
+                    <i className="fas fa-list"></i> Showing {filteredCourses.length} of {courses?.length || 0} courses
                 </div>
             )}
 
@@ -161,7 +174,7 @@ export default function Courses() {
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem' }}>
                                         <span style={{ fontSize: '1.4rem' }}>{course.icon || '📚'}</span>
-                                        {course.name.length > 25 ? course.name.substring(0, 25) + '...' : course.name}
+                                        {course.name && course.name.length > 25 ? course.name.substring(0, 25) + '...' : course.name}
                                     </h3>
                                     <span style={{
                                         background: 'rgba(255,255,255,0.2)',
@@ -197,10 +210,10 @@ export default function Courses() {
                                 </div>
                                 <div className="course-info" style={{ alignItems: 'flex-start' }}>
                                     <i className="fas fa-info-circle"></i>
-                                    <span><strong>Description:</strong> {course.description.length > 80 ? course.description.substring(0, 80) + '...' : course.description}</span>
+                                    <span><strong>Description:</strong> {course.description && course.description.length > 80 ? course.description.substring(0, 80) + '...' : course.description}</span>
                                 </div>
 
-                                {course.topics && course.topics.length > 0 && (
+                                {course.topics && Array.isArray(course.topics) && course.topics.length > 0 && (
                                     <div style={{ marginTop: '12px' }}>
                                         <div className="course-info" style={{ alignItems: 'flex-start' }}>
                                             <i className="fas fa-tags"></i>
