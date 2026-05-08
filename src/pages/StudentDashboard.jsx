@@ -206,20 +206,7 @@ export default function StudentDashboard() {
                         cursor: 'pointer'
                     }}
                 >
-                    <i className="fas fa-book-open"></i> All Courses
-                </button>
-                <button
-                    onClick={() => setActiveTab('notes')}
-                    style={{
-                        padding: '10px 24px',
-                        borderRadius: '40px',
-                        border: 'none',
-                        background: activeTab === 'notes' ? 'linear-gradient(135deg, #4f46e5, #7c3aed)' : 'transparent',
-                        color: activeTab === 'notes' ? 'white' : '#4b5563',
-                        fontWeight: '600',
-                        cursor: 'pointer'
-                    }}
-                >
+                  
                     <i className="fas fa-sticky-note"></i> Announcements
                 </button>
             </div>
