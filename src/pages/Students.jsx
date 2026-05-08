@@ -3,7 +3,6 @@ import StudentForm from '../components/StudentForm';
 
 export default function Students() {
     const [students, setStudents] = useState([]);
-    const [courses, setCourses] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [editingStudent, setEditingStudent] = useState(null);
     const [alert, setAlert] = useState(null);
@@ -17,25 +16,6 @@ export default function Students() {
     const loadData = () => {
         const storedStudents = localStorage.getItem('students');
         if (storedStudents) setStudents(JSON.parse(storedStudents));
-
-        let courseData = localStorage.getItem('courses');
-        if (!courseData || JSON.parse(courseData).length === 0) {
-            const defaultCourses = getDefaultCourses();
-            localStorage.setItem('courses', JSON.stringify(defaultCourses));
-            setCourses(defaultCourses);
-        } else {
-            setCourses(JSON.parse(courseData));
-        }
-    };
-
-    const getDefaultCourses = () => {
-        return [
-            { id: 1, name: 'B.Tech Computer Science', code: 'CSE101', icon: '💻', color: '#4f46e5', duration: '4 Years', fees: '₹1,50,000/year', instructor: 'Dr. Rajesh Kumar' },
-            { id: 2, name: 'Data Science & AI', code: 'DS201', icon: '📊', color: '#10b981', duration: '6 Months', fees: '₹55,000', instructor: 'Prof. Priya Sharma' },
-            { id: 3, name: 'MERN Stack Development', code: 'WEB301', icon: '⚛️', color: '#f59e0b', duration: '4 Months', fees: '₹45,000', instructor: 'Ankit Singh' },
-            { id: 4, name: 'Full Stack Development', code: 'FSD401', icon: '🌐', color: '#3b82f6', duration: '6 Months', fees: '₹60,000', instructor: 'Rahul Mehta' },
-            { id: 5, name: 'Python Programming', code: 'PY501', icon: '🐍', color: '#22c55e', duration: '3 Months', fees: '₹25,000', instructor: 'Dr. Anjali Verma' },
-        ];
     };
 
     const showAlert = (message, type) => {
@@ -54,25 +34,19 @@ export default function Students() {
             return false;
         }
 
-        const selectedCourseObj = courses.find(c => c.name === studentData.course);
-
         let newStudents;
         if (editingStudent) {
             newStudents = students.map(s =>
                 s.id === editingStudent.id ? {
                     ...studentData,
-                    id: s.id,
-                    courseIcon: selectedCourseObj?.icon || '📚',
-                    courseColor: selectedCourseObj?.color || '#4f46e5'
+                    id: s.id
                 } : s
             );
             showAlert('✅ Student updated successfully!', 'success');
         } else {
             newStudents = [...students, {
                 ...studentData,
-                id: Date.now(),
-                courseIcon: selectedCourseObj?.icon || '📚',
-                courseColor: selectedCourseObj?.color || '#4f46e5'
+                id: Date.now()
             }];
             showAlert('🎉 Student added successfully!', 'success');
         }
@@ -125,9 +99,9 @@ export default function Students() {
                 </button>
             </div>
 
-            {/* Search and Filter */}
-            <div style={{ marginBottom: '1.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                <div style={{ position: 'relative', flex: 1 }}>
+            {/* Search */}
+            <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ position: 'relative' }}>
                     <i className="fas fa-search" style={{ position: 'absolute', left: '16px', top: '12px', color: '#9ca3af' }}></i>
                     <input
                         type="text"
@@ -156,9 +130,7 @@ export default function Students() {
                 }}>
                     <span style={{ fontWeight: '600', color: '#4f46e5' }}>Filter by Course:</span>
                     {getUniqueCourses().map(course => {
-                        const courseInfo = courses.find(crs => crs.name === course);
-                        const isAll = course === 'all';
-                        const count = isAll ? students.length : students.filter(s => s.course === course).length;
+                        const count = course === 'all' ? students.length : students.filter(s => s.course === course).length;
                         return (
                             <button
                                 key={course}
@@ -167,17 +139,14 @@ export default function Students() {
                                     padding: '6px 18px',
                                     borderRadius: '40px',
                                     border: selectedCourse === course ? 'none' : '2px solid #e5e7eb',
-                                    background: selectedCourse === course ? `linear-gradient(135deg, ${courseInfo?.color || '#4f46e5'}, ${courseInfo?.color || '#7c3aed'})` : 'white',
-                                    color: selectedCourse === course ? 'white' : courseInfo?.color || '#4f46e5',
+                                    background: selectedCourse === course ? 'linear-gradient(135deg, #4f46e5, #7c3aed)' : 'white',
+                                    color: selectedCourse === course ? 'white' : '#4f46e5',
                                     cursor: 'pointer',
                                     fontWeight: '500',
-                                    fontSize: '0.85rem',
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: '6px'
+                                    fontSize: '0.85rem'
                                 }}
                             >
-                                {!isAll && (courseInfo?.icon || '📚')} {course === 'all' ? 'All Students' : course} ({count})
+                                {course === 'all' ? 'All Students' : course} ({count})
                             </button>
                         );
                     })}
@@ -198,11 +167,10 @@ export default function Students() {
             ) : (
                 <div className="courses-grid">
                     {filteredStudents.map(student => {
-                        const courseInfo = courses.find(c => c.name === student.course);
                         return (
                             <div key={student.id} className="course-card">
                                 <div className="course-header" style={{
-                                    background: `linear-gradient(135deg, ${student.courseColor || courseInfo?.color || '#4f46e5'}, ${student.courseColor || courseInfo?.color || '#7c3aed'})`
+                                    background: 'linear-gradient(135deg, #4f46e5, #7c3aed)'
                                 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -232,21 +200,12 @@ export default function Students() {
                                     <div style={{
                                         marginTop: '12px',
                                         marginBottom: '12px',
-                                        background: `linear-gradient(135deg, ${student.courseColor || courseInfo?.color || '#4f46e5'}15, transparent)`,
+                                        background: '#f3f4f6',
                                         padding: '10px',
-                                        borderRadius: '16px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '12px'
+                                        borderRadius: '16px'
                                     }}>
-                                        <span style={{ fontSize: '1.8rem' }}>{student.courseIcon || courseInfo?.icon || '📚'}</span>
-                                        <div>
-                                            <div style={{ fontWeight: '700', color: student.courseColor || courseInfo?.color || '#4f46e5' }}>
-                                                {student.course}
-                                            </div>
-                                            <div style={{ fontSize: '0.7rem', color: '#6b7280' }}>
-                                                {courseInfo?.instructor && `👨‍🏫 ${courseInfo.instructor}`}
-                                            </div>
+                                        <div style={{ fontWeight: '700', color: '#4f46e5' }}>
+                                            {student.course || 'No course specified'}
                                         </div>
                                     </div>
                                     <div className="course-actions">
@@ -269,7 +228,6 @@ export default function Students() {
                     onSave={handleSave}
                     onClose={() => { setShowModal(false); setEditingStudent(null); }}
                     initialData={editingStudent}
-                    courses={courses}
                 />
             )}
         </div>
