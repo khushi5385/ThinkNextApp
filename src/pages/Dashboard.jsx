@@ -56,7 +56,7 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            {/* Stats Grid */}
+            {/* Stats Grid - Only 3 cards now (removed Active Courses) */}
             <div className="stats-grid">
                 {stats.map((stat, i) => (
                     <div key={i} className="stat-card">
@@ -85,7 +85,7 @@ export default function Dashboard() {
                             <div style={{ width: '40px', height: '40px', background: '#eef2ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>👨‍🎓</div>
                             <div style={{ flex: 1 }}>
                                 <div style={{ fontWeight: '600' }}>{s.name}</div>
-                                <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{s.course}</div>
+                                <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{s.course || 'No course'}</div>
                             </div>
                         </div>
                     ))
