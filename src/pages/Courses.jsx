@@ -15,7 +15,7 @@ export default function Courses() {
             const stored = localStorage.getItem('courses');
             if (stored) {
                 const parsedCourses = JSON.parse(stored);
-                if (parsedCourses && parsedCourses.length > 0) {
+                if (parsedCourses && Array.isArray(parsedCourses) && parsedCourses.length > 0) {
                     setCourses(parsedCourses);
                 } else {
                     const defaultCourses = getDefaultCourses();
@@ -29,7 +29,6 @@ export default function Courses() {
             }
         } catch (error) {
             console.error("Error loading courses:", error);
-            // Set default courses on error
             const defaultCourses = getDefaultCourses();
             setCourses(defaultCourses);
         } finally {
@@ -52,23 +51,45 @@ export default function Courses() {
         ];
     };
 
-    // Safely compute categories - only when courses is an array
+    // SAFE categories calculation - with proper checks
+    const getCategoryCount = (categoryId) => {
+        if (!courses || !Array.isArray(courses)) return 0;
+        if (categoryId === 'all') return courses.length;
+        return courses.filter(c => c && c.category === categoryId).length;
+    };
+
     const categories = [
-        { id: 'all', name: 'All Courses', icon: '📚', count: courses?.length || 0 },
-        { id: 'engineering', name: 'Engineering', icon: '🔧', count: courses?.filter(c => c?.category === 'engineering')?.length || 0 },
-        { id: 'technical', name: 'Technical / IT', icon: '💻', count: courses?.filter(c => c?.category === 'technical')?.length || 0 }
+        { id: 'all', name: 'All Courses', icon: '📚', count: getCategoryCount('all') },
+        { id: 'engineering', name: 'Engineering', icon: '🔧', count: getCategoryCount('engineering') },
+        { id: 'technical', name: 'Technical / IT', icon: '💻', count: getCategoryCount('technical') }
     ];
 
-    // Safely filter courses
-    const filteredCourses = (courses || []).filter(course => {
-        if (!course) return false;
-        const matchCategory = selectedCategory === 'all' || course.category === selectedCategory;
-        const matchSearch = searchTerm === '' ||
-            (course.name && course.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (course.instructor && course.instructor.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (course.topics && Array.isArray(course.topics) && course.topics.some(t => t && t.toLowerCase().includes(searchTerm.toLowerCase())));
-        return matchCategory && matchSearch;
-    });
+    // SAFE filtered courses
+    const getFilteredCourses = () => {
+        if (!courses || !Array.isArray(courses)) return [];
+        
+        return courses.filter(course => {
+            if (!course) return false;
+            
+            const matchCategory = selectedCategory === 'all' || course.category === selectedCategory;
+            
+            let matchSearch = false;
+            if (searchTerm === '') {
+                matchSearch = true;
+            } else {
+                const searchLower = searchTerm.toLowerCase();
+                matchSearch = 
+                    (course.name && course.name.toLowerCase().includes(searchLower)) ||
+                    (course.instructor && course.instructor.toLowerCase().includes(searchLower)) ||
+                    (course.topics && Array.isArray(course.topics) && 
+                     course.topics.some(topic => topic && topic.toLowerCase().includes(searchLower)));
+            }
+            
+            return matchCategory && matchSearch;
+        });
+    };
+
+    const filteredCourses = getFilteredCourses();
 
     if (loading) {
         return (
@@ -87,7 +108,7 @@ export default function Courses() {
                     Course Catalog
                 </h1>
                 <div style={{ fontSize: '0.85rem', color: '#4f46e5', background: '#eef2ff', padding: '6px 16px', borderRadius: '40px' }}>
-                    <i className="fas fa-graduation-cap"></i> {courses?.length || 0}+ Professional Courses
+                    <i className="fas fa-graduation-cap"></i> {courses && Array.isArray(courses) ? courses.length : 0}+ Professional Courses
                 </div>
             </div>
 
@@ -120,7 +141,7 @@ export default function Courses() {
                 flexWrap: 'wrap',
                 justifyContent: 'center'
             }}>
-                {categories.map(cat => (
+                {categories && categories.map(cat => (
                     <button
                         key={cat.id}
                         onClick={() => setSelectedCategory(cat.id)}
@@ -151,14 +172,14 @@ export default function Courses() {
             </div>
 
             {/* Results Info */}
-            {filteredCourses.length > 0 && (
+            {filteredCourses && filteredCourses.length > 0 && (
                 <div style={{ marginBottom: '1rem', textAlign: 'center', color: '#6b7280', fontSize: '0.85rem' }}>
-                    <i className="fas fa-list"></i> Showing {filteredCourses.length} of {courses?.length || 0} courses
+                    <i className="fas fa-list"></i> Showing {filteredCourses.length} of {courses && Array.isArray(courses) ? courses.length : 0} courses
                 </div>
             )}
 
             {/* Courses Grid */}
-            {filteredCourses.length === 0 ? (
+            {!filteredCourses || filteredCourses.length === 0 ? (
                 <div className="empty-state">
                     <i className="fas fa-search"></i>
                     <p>No courses found matching your search</p>
