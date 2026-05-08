@@ -12,8 +12,11 @@ export default function Dashboard() {
     }, []);
 
     const loadData = () => {
-        setStudents(JSON.parse(localStorage.getItem('students') || '[]'));
-        setAttendance(JSON.parse(localStorage.getItem('attendance') || '[]'));
+        const storedStudents = localStorage.getItem('students');
+        const storedAttendance = localStorage.getItem('attendance');
+        
+        if (storedStudents) setStudents(JSON.parse(storedStudents));
+        if (storedAttendance) setAttendance(JSON.parse(storedAttendance));
     };
 
     const calculateAttendanceRate = () => {
@@ -56,7 +59,7 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            {/* Stats Grid - Only 3 cards now (removed Active Courses) */}
+            {/* Stats Grid */}
             <div className="stats-grid">
                 {stats.map((stat, i) => (
                     <div key={i} className="stat-card">
@@ -77,7 +80,7 @@ export default function Dashboard() {
                 {students.length === 0 ? (
                     <div className="empty-state" style={{ padding: '1.5rem' }}>
                         <i className="fas fa-user-slash"></i>
-                        <p>No students yet</p>
+                        <p>No students yet. Click "Add Student" to get started!</p>
                     </div>
                 ) : (
                     students.slice(0, 5).map(s => (
