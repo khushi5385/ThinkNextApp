@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-export default function StudentForm({ onSave, onClose, initialData, courses }) {
+export default function StudentForm({ onSave, onClose, initialData }) {
     const [formData, setFormData] = useState({
         name: initialData?.name || '',
         email: initialData?.email || '',
@@ -9,44 +9,8 @@ export default function StudentForm({ onSave, onClose, initialData, courses }) {
         phone: initialData?.phone || '',
         enrollmentNo: initialData?.enrollmentNo || ''
     });
-    const handleSave = (studentData) => {
-        // ... existing validation code ...
-
-        if (editingStudent) {
-            newStudents = students.map(s =>
-                s.id === editingStudent.id ? {
-                    ...studentData,
-                    id: s.id,
-                    courseIcon: selectedCourseObj?.icon || '📚',
-                    courseColor: selectedCourseObj?.color || '#4f46e5'
-                } : s
-            );
-        } else {
-            newStudents = [...students, {
-                ...studentData,
-                id: Date.now(),
-                courseIcon: selectedCourseObj?.icon || '📚',
-                courseColor: selectedCourseObj?.color || '#4f46e5'
-            }];
-        }
-        // ... rest of the code
-    };
     
     const [errors, setErrors] = useState({});
-    const [availableCourses, setAvailableCourses] = useState([]);
-
-    useEffect(() => {
-        if (courses && Array.isArray(courses) && courses.length > 0) {
-            setAvailableCourses(courses);
-        } else {
-            const defaultCourses = [
-                { id: 1, name: 'B.Tech Computer Science', code: 'CSE101', icon: '💻', duration: '4 Years', fees: '₹1,50,000/year', instructor: 'Dr. Rajesh Kumar' },
-                { id: 2, name: 'Data Science & AI', code: 'DS201', icon: '📊', duration: '6 Months', fees: '₹55,000', instructor: 'Prof. Priya Sharma' },
-                { id: 3, name: 'MERN Stack Development', code: 'WEB301', icon: '⚛️', duration: '4 Months', fees: '₹45,000', instructor: 'Ankit Singh' },
-            ];
-            setAvailableCourses(defaultCourses);
-        }
-    }, [courses]);
 
     const validateEmail = (email) => {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -69,8 +33,6 @@ export default function StudentForm({ onSave, onClose, initialData, courses }) {
 
         onSave(formData);
     };
-
-    const selectedCourseDetails = availableCourses.find(c => c.name === formData.course);
 
     return (
         <div className="modal-overlay" onClick={onClose}>
@@ -114,18 +76,13 @@ export default function StudentForm({ onSave, onClose, initialData, courses }) {
                     />
                     {errors.password && <small style={{ color: '#dc2626', display: 'block', marginBottom: '8px', fontSize: '0.75rem' }}>{errors.password}</small>}
 
-                    <select
+                    <input
+                        type="text"
+                        placeholder="Course Name *"
                         value={formData.course}
                         onChange={(e) => setFormData({ ...formData, course: e.target.value })}
                         style={{ borderColor: errors.course ? '#dc2626' : '#e5e7eb' }}
-                    >
-                        <option value="">🎓 Select a Course *</option>
-                        {availableCourses.map(course => (
-                            <option key={course.id} value={course.name}>
-                                {course.icon} {course.name} - {course.duration}
-                            </option>
-                        ))}
-                    </select>
+                    />
                     {errors.course && <small style={{ color: '#dc2626', display: 'block', marginBottom: '8px', fontSize: '0.75rem' }}>{errors.course}</small>}
 
                     <input
@@ -134,21 +91,6 @@ export default function StudentForm({ onSave, onClose, initialData, courses }) {
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     />
-
-                    {selectedCourseDetails && (
-                        <div style={{
-                            background: '#f8fafc',
-                            padding: '12px',
-                            borderRadius: '16px',
-                            marginBottom: '1rem',
-                            border: '1px solid #e2e8f0'
-                        }}>
-                            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                                <div>👨‍🏫 {selectedCourseDetails.instructor}</div>
-                                <div>💰 {selectedCourseDetails.fees}</div>
-                            </div>
-                        </div>
-                    )}
 
                     <div className="modal-buttons">
                         <button type="submit" className="btn-primary">
