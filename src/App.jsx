@@ -2,8 +2,7 @@ import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import Students from './pages/Students';
-import Courses from './pages/Courses';
+import Students from './pages/Students
 import Attendance from './components/Attendance';
 import StudentDashboard from './pages/StudentDashboard';
 import Navbar from './components/Navbar';
@@ -38,7 +37,7 @@ function AdminLayout() {
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/students" element={<Students />} />
-            <Route path="/courses" element={<Courses />} />
+            
             <Route path="/attendance" element={<Attendance />} />
             <Route path="/" element={<Navigate to="/admin/dashboard" />} />
           </Routes>
