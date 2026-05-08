@@ -15,7 +15,33 @@ export default function Students() {
 
     const loadData = () => {
         const storedStudents = localStorage.getItem('students');
-        if (storedStudents) setStudents(JSON.parse(storedStudents));
+        if (storedStudents) {
+            setStudents(JSON.parse(storedStudents));
+        } else {
+            // Add sample data for testing
+            const sampleStudents = [
+                {
+                    id: 1,
+                    name: 'John Doe',
+                    email: 'john@example.com',
+                    course: 'B.Tech Computer Science',
+                    phone: '9876543210',
+                    enrollmentNo: '2024001',
+                    password: 'password123'
+                },
+                {
+                    id: 2,
+                    name: 'Jane Smith',
+                    email: 'jane@example.com',
+                    course: 'Data Science',
+                    phone: '9876543211',
+                    enrollmentNo: '2024002',
+                    password: 'password123'
+                }
+            ];
+            setStudents(sampleStudents);
+            localStorage.setItem('students', JSON.stringify(sampleStudents));
+        }
     };
 
     const showAlert = (message, type) => {
@@ -205,7 +231,7 @@ export default function Students() {
                                         borderRadius: '16px'
                                     }}>
                                         <div style={{ fontWeight: '700', color: '#4f46e5' }}>
-                                            {student.course || 'No course specified'}
+                                            📚 {student.course || 'No course specified'}
                                         </div>
                                     </div>
                                     <div className="course-actions">
