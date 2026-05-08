@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 
 export default function Dashboard() {
     const [students, setStudents] = useState([]);
-    const [courses, setCourses] = useState([]);
     const [attendance, setAttendance] = useState([]);
     const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -14,7 +13,6 @@ export default function Dashboard() {
 
     const loadData = () => {
         setStudents(JSON.parse(localStorage.getItem('students') || '[]'));
-        setCourses(JSON.parse(localStorage.getItem('courses') || '[]'));
         setAttendance(JSON.parse(localStorage.getItem('attendance') || '[]'));
     };
 
@@ -32,7 +30,6 @@ export default function Dashboard() {
 
     const stats = [
         { icon: '👨‍🎓', title: 'Total Students', value: students.length, color: '#4f46e5' },
-        { icon: '📚', title: 'Active Courses', value: courses.length, color: '#10b981' },
         { icon: '📊', title: 'Attendance Rate', value: `${calculateAttendanceRate()}%`, color: '#f59e0b' },
         { icon: '✅', title: 'Present Today', value: getTodayPresent(), color: '#ef4444' }
     ];
@@ -51,7 +48,7 @@ export default function Dashboard() {
                     🎓 Welcome to ThinkNEXT Technologies
                 </h2>
                 <p style={{ opacity: 0.9, marginBottom: '1rem' }}>
-                    Manage students, courses, and attendance efficiently
+                    Manage students and attendance efficiently
                 </p>
                 <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', fontSize: '0.85rem' }}>
                     <span><i className="far fa-calendar-alt"></i> {currentTime.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
@@ -72,51 +69,27 @@ export default function Dashboard() {
                 ))}
             </div>
 
-            {/* Recent Sections */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem' }}>
-                <div className="table-wrapper" style={{ padding: '1.5rem' }}>
-                    <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <i className="fas fa-users" style={{ color: '#4f46e5' }}></i> Recent Students
-                    </h3>
-                    {students.length === 0 ? (
-                        <div className="empty-state" style={{ padding: '1.5rem' }}>
-                            <i className="fas fa-user-slash"></i>
-                            <p>No students yet</p>
-                        </div>
-                    ) : (
-                        students.slice(0, 5).map(s => (
-                            <div key={s.id} style={{ padding: '12px 0', borderBottom: '1px solid #f3f4f6', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <div style={{ width: '40px', height: '40px', background: '#eef2ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>👨‍🎓</div>
-                                <div style={{ flex: 1 }}>
-                                    <div style={{ fontWeight: '600' }}>{s.name}</div>
-                                    <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{s.course}</div>
-                                </div>
+            {/* Recent Students Section */}
+            <div className="table-wrapper" style={{ padding: '1.5rem' }}>
+                <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <i className="fas fa-users" style={{ color: '#4f46e5' }}></i> Recent Students
+                </h3>
+                {students.length === 0 ? (
+                    <div className="empty-state" style={{ padding: '1.5rem' }}>
+                        <i className="fas fa-user-slash"></i>
+                        <p>No students yet</p>
+                    </div>
+                ) : (
+                    students.slice(0, 5).map(s => (
+                        <div key={s.id} style={{ padding: '12px 0', borderBottom: '1px solid #f3f4f6', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div style={{ width: '40px', height: '40px', background: '#eef2ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>👨‍🎓</div>
+                            <div style={{ flex: 1 }}>
+                                <div style={{ fontWeight: '600' }}>{s.name}</div>
+                                <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{s.course}</div>
                             </div>
-                        ))
-                    )}
-                </div>
-
-                <div className="table-wrapper" style={{ padding: '1.5rem' }}>
-                    <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <i className="fas fa-book-open" style={{ color: '#10b981' }}></i> Popular Courses
-                    </h3>
-                    {courses.length === 0 ? (
-                        <div className="empty-state" style={{ padding: '1.5rem' }}>
-                            <i className="fas fa-book"></i>
-                            <p>No courses yet</p>
                         </div>
-                    ) : (
-                        courses.slice(0, 5).map(c => (
-                            <div key={c.id} style={{ padding: '12px 0', borderBottom: '1px solid #f3f4f6', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <div style={{ width: '40px', height: '40px', background: '#ecfdf5', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>{c.icon || '📚'}</div>
-                                <div style={{ flex: 1 }}>
-                                    <div style={{ fontWeight: '600' }}>{c.name}</div>
-                                    <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{c.instructor}</div>
-                                </div>
-                            </div>
-                        ))
-                    )}
-                </div>
+                    ))
+                )}
             </div>
         </div>
     );
